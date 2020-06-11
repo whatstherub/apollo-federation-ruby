@@ -58,9 +58,10 @@ module ApolloFederation
       # Step 1:
       # Create a trace hash on the query context and record start times.
       def self.execute_query(data, &block)
+        puts "execute query"
         query = data.fetch(:query)
         return block.call unless query.context && query.context[:tracing_enabled]
-
+        puts "set start time"
         query.context.namespace(ApolloFederation::Tracing::KEY).merge!(
           start_time: Time.now.utc,
           start_time_nanos: Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond),
@@ -130,14 +131,8 @@ module ApolloFederation
           field_name = field.graphql_name
           field_type = field.type.to_type_signature
           parent_type = data.fetch(:owner).graphql_name
-          
-          puts "execute field interpreter #{path}"
-          
         end
-        
-        puts "execute field [#{path}]"
-        
-        
+                
         trace = context.namespace(ApolloFederation::Tracing::KEY)
         node = trace[:node_map].add(path)
 
