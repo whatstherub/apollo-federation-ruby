@@ -39,11 +39,12 @@ module ApolloFederation
       EXECUTE_QUERY_LAZY = 'execute_query_lazy'
       EXECUTE_FIELD = 'execute_field'
       EXECUTE_FIELD_LAZY = 'execute_field_lazy'
-
+      EXECUTE_MULTIPLEX = 'execute_multiplex'
+      
       def self.trace(key, data, &block)
         puts "trace #{key}"
         case key
-        when EXECUTE_QUERY
+        when EXECUTE_QUERY, EXECUTE_MULTIPLEX
           execute_query(data, &block)
         when EXECUTE_QUERY_LAZY
           execute_query_lazy(data, &block)
