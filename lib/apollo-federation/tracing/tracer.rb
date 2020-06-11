@@ -103,8 +103,7 @@ module ApolloFederation
       # because we don't have the error `location` here.
       # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       def self.execute_field(data, &block)
-        puts "execute field [#{path}]"
-
+        
         context = data.fetch(:context, nil) || data.fetch(:query).context
         return block.call unless context && context[:tracing_enabled]
 
@@ -120,19 +119,20 @@ module ApolloFederation
 
         # legacy runtime
         if data.include?(:context)
-          puts "execute field CONTEXT"
-
           path = context.path
+          puts "execute field CONTEXT #{path}"
           field_name = context.field.graphql_name
           field_type = context.field.type.to_s
           parent_type = context.parent_type.graphql_name
         else # interpreter runtime
-          puts "execute field interpreter"
           path = data.fetch(:path)
           field = data.fetch(:field)
           field_name = field.graphql_name
           field_type = field.type.to_type_signature
           parent_type = data.fetch(:owner).graphql_name
+          
+          puts "execute field interpreter #{path}"
+          
         end
         
         puts "execute field [#{path}]"
