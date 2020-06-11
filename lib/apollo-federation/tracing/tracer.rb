@@ -103,6 +103,8 @@ module ApolloFederation
       # because we don't have the error `location` here.
       # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       def self.execute_field(data, &block)
+        puts "execute field [#{path}]"
+
         context = data.fetch(:context, nil) || data.fetch(:query).context
         return block.call unless context && context[:tracing_enabled]
 
@@ -113,23 +115,29 @@ module ApolloFederation
         rescue StandardError => e
           error = e
         end
-
+        
         end_time_nanos = Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond)
 
         # legacy runtime
         if data.include?(:context)
+          puts "execute field CONTEXT"
+
           path = context.path
           field_name = context.field.graphql_name
           field_type = context.field.type.to_s
           parent_type = context.parent_type.graphql_name
         else # interpreter runtime
+          puts "execute field interpreter"
           path = data.fetch(:path)
           field = data.fetch(:field)
           field_name = field.graphql_name
           field_type = field.type.to_type_signature
           parent_type = data.fetch(:owner).graphql_name
         end
-
+        
+        puts "execute field [#{path}]"
+        
+        
         trace = context.namespace(ApolloFederation::Tracing::KEY)
         node = trace[:node_map].add(path)
 
@@ -170,6 +178,7 @@ module ApolloFederation
 
         trace = context.namespace(ApolloFederation::Tracing::KEY)
 
+        puts "execute field lazy [#{path}]"
         node = trace[:node_map].node_for_path(path)
         node.end_time = end_time_nanos - trace[:start_time_nanos]
 
