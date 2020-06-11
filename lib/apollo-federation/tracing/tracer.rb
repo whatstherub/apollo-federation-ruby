@@ -41,7 +41,7 @@ module ApolloFederation
       EXECUTE_FIELD_LAZY = 'execute_field_lazy'
 
       def self.trace(key, data, &block)
-        puts "trace"
+        puts "trace #{key}"
         case key
         when EXECUTE_QUERY
           execute_query(data, &block)
